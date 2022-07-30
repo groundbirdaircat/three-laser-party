@@ -47,11 +47,12 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
   * [Basic Setup](#basic-setup)
+  * [Importing the Module](#importing-the-module)
 
 <br />
 
 - [**Laser**](#laser)
-  * [Importing and Creating](#importing-and-creating)
+  * [Adding a Laser](#adding-a-laser)
   * [Raycasting](#raycasting)
     * [Laser Specific Raycast Objects](#laser-specific-raycast-objects)
     * [Global Raycast Objects](#global-raycast-objects)
@@ -177,6 +178,38 @@ Copy/paste if you want to follow along.
 
 <br />
 
+## **Importing the Module**
+
+To import the module using a *named* import, you must add the module to your `importmap`.
+
+In [index.html](#basic-setup), change your `importmap` to:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "three": "./node_modules/three/build/three.module.js",
+      "three-laser-party": "./node_modules/three-laser-party/laserParty.js"
+    }
+  }
+</script>
+```
+
+Then, in [index.js](#basic-setup), under the three.js imports, add:
+
+
+```js
+import laserParty from 'three-laser-party'
+```
+
+*Alternatively*, you can import the module using a relative path, in which case you would not have to update the `importmap`.
+
+```js
+import laserParty from './node_modules/three-laser-party/laserParty.js'
+```
+
+<br />
+
 
 <!--       -->
 <!-- LASER -->
@@ -185,18 +218,9 @@ Copy/paste if you want to follow along.
 
 # **Laser**
 
-## [**Importing and Creating**](#importing-and-creating)
+## [**Adding a Laser**](#adding-a-laser)
 
-To create a laser, we must first import the module.
-
-Under the three.js imports, add:
-
-
-```js
-import laserParty from 'three-laser-party'
-```
-
-Now, in our [`buildLasers()`](#basic-setup) function, let's add a laser.
+In our [`buildLasers()`](#basic-setup) function, let's add a laser.
 
 ```js
 function buildLasers() {
