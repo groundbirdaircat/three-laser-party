@@ -1,0 +1,26 @@
+{
+  "name": "three-laser-party",
+  "version": "1.0.0",
+  "description": "A visual laser module for THREE.js",
+  "main": "laserParty.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/groundbirdaircat/three-laser-party.git"
+  },
+  "keywords": [
+    "laserParty",
+    "laser",
+    "party",
+    "three",
+    "THREE.js"
+  ],
+  "author": "GroundBirdAirCat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/groundbirdaircat/three-laser-party/issues"
+  },
+  "homepage": "https://github.com/groundbirdaircat/three-laser-party#readme"
+}
