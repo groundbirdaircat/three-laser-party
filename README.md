@@ -684,7 +684,7 @@ Default: `false`
 
 *Note:* This setting only works on laser creation.
 
-On an *existing* laser, you can use the [`raycast.once()`](#raycast-once) method
+On an *existing* laser, you can use the [`raycast.once()`](#raycast-once) method.
 
 If the `raycastOnce` setting is `true`, the laser will raycast one time after it is created. This setting is not needed if you are [raycasting on every frame](#raycast-every-frame).
 
@@ -1209,7 +1209,7 @@ function buildLasers() {
     
 }
 ```
-`group()` accepts an unlimited amount of [lasers](#laser) and *arrays* of [lasers](#laser) as arguments.
+`group()` accepts an unlimited amount of [lasers](#laser) and/or *arrays* of [lasers](#laser) as arguments.
 
 <br />
 
@@ -2101,7 +2101,7 @@ This method is an alias for `new Laser()`.
 
 Creates a new [laser](#laser).
 
-See [Importing and Creating](#importing-and-creating) for use.
+See [Adding a Laser](#adding-a-laser) for use.
 
 <br />
 
