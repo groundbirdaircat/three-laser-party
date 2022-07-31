@@ -963,7 +963,7 @@ Now that you know about the [laser settings](#settings), defaults will be easy.
 
 For this, we will use the [`laserParty.defaults`](#laserparty-defaults) object.
 
-You can change properties on this object, or pass it's `set()` method a [setting object](#settings).
+You can change properties on this object, or pass it's `set()` method a [settings object](#settings).
 
 These properties are exactly the same as the ones we went over in [laser settings](#settings), with the *exclusion* of [transform](#transforms) settings: `x`, `y`, `z`, `rotX`, `rotY`, and `rotZ`. This is because these transforms are usually different, and should probably be set explicitly. 
 
@@ -1285,7 +1285,7 @@ The `removeAll()` method removes **all** lasers from a `group`.
 
 # **Pose**
 
-A `pose` is basically a [setting object](#settings) that can be applied to any [lasers](#laser), [groups](#group), or arrays of [lasers](#laser) and/or [groups](#group).
+A `pose` is basically a [settings object](#settings) that can be applied to any [lasers](#laser), [groups](#group), or arrays of [lasers](#laser) and/or [groups](#group).
 
 It accepts all [color](#color), [movement](#movement), and [animation](#animation) settings.
 
