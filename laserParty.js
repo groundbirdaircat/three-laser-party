@@ -226,30 +226,19 @@ const laserMain = {
     },
     validateAnimationType( type, animation ) {
 
-        if ( type == 'movement' && animation.type != 'movement') {
+        if ( type != animation.type ) {
 
             laserMain.doUniqueError( 
                 `Laser Animation: Invalid animation type`
-                + ` being used on property 'animation': `
+                + ` being used on property '${
+                    type == 'color' ? 'colorA' : 'a'
+                }nimation': `
                 + ( animation.name ?
                     `Name: `+ animation.name : 
                     'unnamed' )
                 + `. Type: ${ animation.type }`
             )
         }
-
-        if ( type == 'color' && animation.type != 'color') {
-
-            laserMain.doUniqueError( 
-                `Laser Animation: Invalid animation type`
-                + ` being used on property 'colorAnimation': `
-                + ( animation.name ?
-                    `Name: "${ animation.name }"` : 
-                    'unnamed' )
-                + `. Type: ${ animation.type }`
-            )
-        }
-
     },
 
     // utilities
@@ -275,15 +264,17 @@ const laserMain = {
 
         else return laserMain.defaults[ property ]
     },
-    doUniqueError: ( () => {
+    doUniqueError: (function iIFE() {
+
         let uniqueErrors = []
+
         return function( error ){
             if ( uniqueErrors.includes( error ) ) return
 
             uniqueErrors.push( error )
             console.error( error )
         }
-    } )(),
+    })(),
     tempToClear: [],
     clearDisposed() {
         // clear all children backwards, order comes from traverse
@@ -474,9 +465,7 @@ const laserMain = {
 
         const spriteScale = .1 * this.thickness
         pointSprite.scale.set( spriteScale, spriteScale, spriteScale )
-
-        if ( data.raycastOnce ) pointSprite.visible = true
-        else pointSprite.visible = false
+        pointSprite.visible = false
 
         // material for plane
         const planeMaterial = new MeshBasicMaterial({
@@ -571,29 +560,6 @@ const laserMain = {
     },
 
     // LaserObject init fns
-    validateName( data ) {
-        const type = typeof data.name
-
-        if ( type != 'string' ) {
-            if ( type != 'undefined' ) {
-                throw new Error( 
-                    `Laser New: Name must be a string: ${ data.name }` 
-                )
-            }
-        }
-        else {
-            if ( laserMain.all.find( laser => laser.name === data.name ) ) {
-                throw new Error( 
-                    `Laser New: Name is already used: ${ data.name }` 
-                )
-            }
-            else Object.defineProperty( this, 'name', {
-                value: data.name,
-                writable: false,
-                configurable: true,
-            })
-        }
-    },
     initSettings( data ) {
         // meta
         Object.defineProperty( this, 'isLaser', {
@@ -604,14 +570,22 @@ const laserMain = {
         
         Object.defineProperty( this, 'defaults', {
             value: {},
+            configurable: true,
         })
 
         // raycast
-        this.raycast = {}
-        this.raycast.objects = []
+        Object.defineProperty( this, 'raycast', {
+            value: {
+                objects: []
+            },
+            configurable: true,
+        })
 
         // groups
-        this.groups = []
+        Object.defineProperty( this, 'groups', {
+            value: [],
+            configurable: true,
+        })
     },
     initGettersSetters( data ) {
 
@@ -822,7 +796,6 @@ const laserMain = {
 
     },
     postCreateInit( data ) {
-        this.enabled = laserMain.getValueOrDefault( 'enabled', data )
 
         // spread / side
         this.updateSpreadAndSide()
@@ -841,10 +814,12 @@ const laserMain = {
         Object.defineProperty( this.raycast, 'enabled', {
             set: function( bool ) {
 
-                _raycastEnabled = bool
+                _raycastEnabled = !!bool
 
-                for ( let pointSprite of this.allPointSprites ) {
-                    pointSprite.visible = bool
+                if ( !bool ) {
+                    for ( let pointSprite of this.allPointSprites ) {
+                        pointSprite.visible = bool
+                    }
                 }
             }.bind( this ),
             get: function() { return _raycastEnabled }
@@ -866,8 +841,6 @@ const laserMain = {
 class LaserObject extends Object3D {
     constructor( data = {} ) {
         super()
-
-        laserMain.validateName.call( this, data )
 
         if ( !laserMain.hasInit ) laserMain.init()
 
