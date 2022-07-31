@@ -331,10 +331,8 @@ const laserMain = {
     },
     disposeFn( item ) {
         if ( 
-                (
-                    item.type == 'Sprite' || 
-                    ( item.type == 'Mesh' && item.name != 'baseBox' )
-                ) 
+                item.type == 'Sprite' || 
+                ( item.type == 'Mesh' && item.name != 'baseBox' )
             ) {
             item.material.dispose()
         }
@@ -384,12 +382,12 @@ const laserMain = {
 
 
         Object.defineProperty( beamParent, 'convertedSaturation', {
-            get: function() { return Math.floor( this.saturation * 100 ) },
+            get: function() { return Math.floor( _saturation * 100 ) },
         })
 
 
         Object.defineProperty( beamParent, 'convertedLightness', {
-            get: function() { return Math.floor( this.lightness * 100 ) }
+            get: function() { return Math.floor( _lightness * 100 ) }
         })
     },
     setBeamParentHue() {
@@ -454,7 +452,7 @@ const laserMain = {
         beamParent.name = 'beamParent' + len
         laserMain.setBeamProperties.call( this, beamParent )
 
-        const planeParent = new Object3D() // planes (planes) go in here
+        const planeParent = new Object3D() // planes go in here
         planeParent.name = 'planeParent' + len
         
         // parent translate to point planes down z axis
@@ -512,39 +510,39 @@ const laserMain = {
     },
     createBaseBox( data ) {
 
-        if ( laserMain.getValueOrDefault( 'baseBox', data ) ) {
+        if ( !laserMain.getValueOrDefault( 'baseBox', data ) ) 
+            return
 
-            this.baseBox = laserMain.baseBox.clone()
-            this.add( this.baseBox )
+        this.baseBox = laserMain.baseBox.clone()
+        this.add( this.baseBox )
 
-            this.baseBox.position.y = .125
+        this.baseBox.position.y = .125
 
-            // adjust plane start point to box
-            this.laserWrap.position.set( 0, .125, .25)
+        // adjust plane start point to box
+        this.laserWrap.position.set( 0, .125, .25)
 
-            // base sprite
-            {
-                const baseSpriteMaterial = new SpriteMaterial({
-                    map: laserMain.pointTexture,
-                    blending: AdditiveBlending,
-                })
-                this.baseSprite = new Sprite( baseSpriteMaterial )
-                this.baseSprite.name = 'baseSprite'
-            }
-
-            {
-                const spriteScale = .1 * this.thickness
-
-                this.baseSprite.scale.set( 
-                    spriteScale, spriteScale, spriteScale 
-                )
-            }
-
-            laserMain.setBaseSpriteLightness.call( this )
-            this.baseSprite.position.z = .01
-
-            this.laserWrap.add(this.baseSprite)
+        // base sprite
+        {
+            const baseSpriteMaterial = new SpriteMaterial({
+                map: laserMain.pointTexture,
+                blending: AdditiveBlending,
+            })
+            this.baseSprite = new Sprite( baseSpriteMaterial )
+            this.baseSprite.name = 'baseSprite'
         }
+
+        {
+            const spriteScale = .1 * this.thickness
+
+            this.baseSprite.scale.set( 
+                spriteScale, spriteScale, spriteScale 
+            )
+        }
+
+        laserMain.setBaseSpriteLightness.call( this )
+        this.baseSprite.position.z = .01
+
+        this.laserWrap.add(this.baseSprite)
     },
     checkAddTo( data ) {
         let addTo = laserMain.getValueOrDefault( 'addTo', data )
@@ -557,7 +555,7 @@ const laserMain = {
         var tempToClear = []
 
         beam.traverse( item => 
-                tempToClear.push( item ))
+                tempToClear.push( item ) )
 
         for ( let i = tempToClear.length - 1; i >= 0; i-- ) {
 
@@ -626,7 +624,9 @@ const laserMain = {
             configurable: true,
             get: function() { return _hue },
             set: function( value ) {
+
                 _hue = Math.round( value )
+
                 if ( _hue < 0 ) _hue = Math.round(
                     _hue + Math.ceil( 
                         Math.abs( _hue / 360 ) 
@@ -651,10 +651,10 @@ const laserMain = {
             configurable: true,
             get: function() { return _saturation },
             set: function( value ) {
+
                 _saturation = MathUtils.clamp( value, 0, 1 )
         
                 for ( let beamParent of this.allBeamParents ) {
-
 
                     laserMain.setBeamParentToLaserHSL.call(
                         this,
@@ -674,10 +674,10 @@ const laserMain = {
             configurable: true,
             get: function() { return _lightness },
             set: function( value ) {
+
                 _lightness = MathUtils.clamp( value, 0, 1 )
         
                 for ( let beamParent of this.allBeamParents ) {
-
 
                     laserMain.setBeamParentToLaserHSL.call(
                         this,
@@ -697,13 +697,16 @@ const laserMain = {
             configurable: true,
             get: function() { return _distance },
             set: function( value ) {
+
                 _distance = value
         
                 for ( let [ i ] of this.getBeamParents ) {
                     raycast.scaleBeamToFullDistance.call( this, i )
                     raycast.offsetBeamAfterScaling.call( this, i )
                 }
-                if ( this.raycast.enabled ) this.raycast.once()
+
+                this.raycast.enabled && 
+                    this.raycast.once()
             }
         })
         
@@ -836,7 +839,8 @@ const laserMain = {
         let _raycastEnabled = laserMain.getValueOrDefault( 'raycast', data )
 
         Object.defineProperty( this.raycast, 'enabled', {
-            set: function( bool ) { 
+            set: function( bool ) {
+
                 _raycastEnabled = bool
 
                 for ( let pointSprite of this.allPointSprites ) {
@@ -846,11 +850,10 @@ const laserMain = {
             get: function() { return _raycastEnabled }
         })
 
-        { // point at
-            const target = laserMain.getValueOrDefault( 'pointAt', data )
-            this.defaults.pointAt = target
-            target && this.pointAt( target )
-        }
+        // point at
+        const target = laserMain.getValueOrDefault( 'pointAt', data )
+        this.defaults.pointAt = target
+        target && this.pointAt( target )
     },
     initRaycastFns( data ) {
 
@@ -922,7 +925,9 @@ class LaserObject extends Object3D {
     })()
     update() {
         this.updateSpreadAndSide()
-        if ( this.raycast.enabled ) this.raycast.once()
+
+        this.raycast.enabled && 
+            this.raycast.once()
     }
     reset( zero ) {
         if ( zero === 0 ) {
@@ -1061,13 +1066,12 @@ const groupMain = {
 
                 for ( let laser of objOrAry ) {
                     // add group id to laser
-                    if ( groupMain.validateLaser( laser ) ) {
+                    if ( groupMain.validateLaser( laser ) )
                         laser.groups.push( this.id )
-                    }
+
                     // add to laserArray if unique
-                    if ( !laserArray.includes( objOrAry ) ) {
+                    if ( !laserArray.includes( objOrAry ) )
                         laserArray.push( laser )
-                    }
                 }
             }
 
@@ -1076,13 +1080,12 @@ const groupMain = {
             else if ( groupMain.validateLaser( objOrAry ) ) {
 
                 // add group id to laser
-                if ( !objOrAry.groups.includes( this.id ) ) {
+                if ( !objOrAry.groups.includes( this.id ) )
                     objOrAry.groups.push( this.id )
-                }
+                    
                 // add to laserArray if unique
-                if ( !laserArray.includes( objOrAry ) ) {
+                if ( !laserArray.includes( objOrAry ) )
                     laserArray.push( objOrAry )
-                }
             }
         }
 
@@ -1297,7 +1300,9 @@ const poseMain = {
 
     },
     validateAndParseData( data ) {
+
         this.pose = {}
+
         for ( let [ key, value ] of Object.entries( data ) ) {
 
             if  ( poseMain.extraProperties.includes( key ) ) 
@@ -1349,13 +1354,16 @@ const poseObject = {
         return this
     },
     apply( ...laserOrGroups ) {
+
         for ( let laserOrGroup of laserOrGroups ) {
+
             if ( Array.isArray( laserOrGroup ) ) {
+
                 for ( let nestedLaserOrGroup of laserOrGroup) {
+
                     poseMain.checkGroupOrLaserThenApply
                     .call( this, nestedLaserOrGroup )
                 }
-
             }
             else {
                 poseMain.checkGroupOrLaserThenApply
@@ -1482,6 +1490,7 @@ const presetMain = {
 
         // apply to each laser in group
         else if ( presetSetting.target.isLaserGroup ) {
+
             for ( let laser of presetSetting.target.lasers ) {
 
                 let newSetting = { 
@@ -1575,7 +1584,7 @@ const animMain = {
         } 
 
         // passed
-        else return false
+        return false
     },
     fnIsInvalid( { fn } ) {
         if ( typeof fn != 'function' ) {
@@ -1682,6 +1691,7 @@ const raycast = {
     },
 
     add( ...array ) {
+
         // adds obj3d or array of obj3ds to check against when raycasting
         for ( let obj3dOrArray of array ) {
 

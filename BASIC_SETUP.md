@@ -14,12 +14,12 @@
   </head>
   <body style="margin: 0">
     <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-      <script type="importmap">
-        {
-          "imports": {
-            "three": "./node_modules/three/build/three.module.js"
-          }
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./node_modules/three/build/three.module.js"
         }
+      }
     </script>
     <script type="module" src="./index.js"></script>
   </body>
